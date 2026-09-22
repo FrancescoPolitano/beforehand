@@ -1,0 +1,17 @@
+#!/bin/sh
+# dev/pre-commit — the generality gate as a git pre-commit hook (SPEC-1.0 §0, §3).
+# Install from the repository root:  ln -s ../../dev/pre-commit .git/hooks/pre-commit
+# Runs dev/check_generality.sh from the repository root, with the term list named by
+# BEFOREHAND_DEV_TERMS when it is set (your own file, kept outside the repository), and exits
+# with its code: a hit, or a scan that could not complete, blocks the commit.
+# git runs a hook from the root of the work tree; the fallbacks cover running it by hand as
+# dev/pre-commit or through the .git/hooks/ link from elsewhere.
+here=$(dirname "$0")
+for root in . "$here/.." "$here/../.."; do
+  [ -f "$root/dev/check_generality.sh" ] && [ -f "$root/dev/pre-commit" ] && break
+  root=""
+done
+[ -n "$root" ] || { echo "pre-commit: cannot find dev/check_generality.sh"; exit 1; }
+cd "$root" || exit 1
+sh dev/check_generality.sh
+exit $?

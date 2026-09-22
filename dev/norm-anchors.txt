@@ -1,0 +1,54 @@
+# Norm anchors — one distinctive phrase per norm of the evidence model (SPEC-0.2 FR-3.2).
+#
+# Every phrase below is a literal substring of skills/beforehand/references/evidence-model.md,
+# which is the one file allowed to state these rules. dev/check_norms.sh greps each phrase
+# across skills/beforehand/ and requires exactly one matching file: a second file means the
+# rule has been restated instead of cited by anchor.
+#
+# Rules: one phrase per line; it must sit on a SINGLE line in EVERY file where the norm
+# appears (grep is line-based, so a phrase that wraps in the duplicate silently reports
+# one file and hides it); `#` and blank lines are ignored. The phrase is checked with
+# grep -F, so punctuation and case are literal. Several anchors are therefore fragments
+# of their sentence, cut to what fits one line on both sides.
+#
+# Scope: this file covers the norms of the evidence model. Norms that belong to a flow
+# (the two-file isolation rule of review.md, the lint gate's two legal exits in
+# authoring.md, the calibration accounting) are tracked in docs/ARCHITECTURE.md's
+# rule table instead; they are not anchored here, because an anchor phrase that is not in
+# evidence-model.md cannot be checked against "stated once, in that file".
+#
+# Not anchorable: the canonical empty-section form `no evidence as of <date>` is also a
+# string in scripts/coverage.py, which parses it, so its file count can never be 1. The
+# empty-section norm is anchored on its rationale clause instead.
+
+# --- Labels, tags, promotions ---
+is a claim you should not write
+excerpt is mandatory and sits inside the tag in double
+One Fact per parenthesis
+must not look identical
+
+# --- The two axes ---
+public statement proves what the person
+for the person they describe, whatever the carrying source's
+Determine provenance before labelling anything
+a direct quotation attributed to the
+ceiling, not a floor: nothing here forces a Fact
+the label then attributes nothing by itself
+
+# --- Declared and demonstrated ---
+A field named like the criterion is not the criterion.
+
+# --- Empty sections, post-review, watchlist ---
+documented red lines is not a person without red lines
+cannot promote a claim
+confirm at most as a reinforced Inference
+[wl-NN] **Title.**
+Independence is a judgment, not a count
+
+# --- Writes, sources, glossary ---
+proposed, then applied only after the user confirms
+confirmation protects personas, not every file
+never in the store, and only if the user asks
+hand-appended, never derived
+A source must exist as an intact local file before it is extracted from
+a round-1 prediction row of the version actually sent

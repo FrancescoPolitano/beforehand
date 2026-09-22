@@ -1,0 +1,20 @@
+# Working material that must never reach a commit. `dev/check_generality.sh` refuses
+# __pycache__, .backup-*, skill-workspace and .superpowers anywhere under the tree, and
+# catches a stray .pyc through the absolute build path it embeds.
+__pycache__/
+*.pyc
+.backup-*/
+skill-workspace/
+.superpowers/
+
+# Local tooling noise.
+.ruff_cache/
+.DS_Store
+.claude/settings.local.json
+.venv/
+build/
+*.egg-info/
+uv.lock
+
+# Build output: `dev/build_skill.sh` rebuilds it from skills/ on demand (SPEC-0.2 FR-7.5).
+dist/

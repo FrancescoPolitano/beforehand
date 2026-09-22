@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" width="960" height="400" role="img" aria-labelledby="loopTitle loopDesc">
+  <title id="loopTitle">The beforehand loop</title>
+  <desc id="loopDesc">Sources feed a persona whose claims are labeled Fact, Inference or Assumption and gated by a lint check. The persona is convened in a panel of isolated reviewers alongside a control reviewer. The panel freezes a snapshot of its predictions before the meeting. After the meeting, calibrate grades those predictions into precision and coverage, which feed back into the persona.</desc>
+
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#0969da"/>
+    </marker>
+    <marker id="arrowSoft" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#6e7781"/>
+    </marker>
+  </defs>
+
+  <style>
+    .card { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .card-key { fill: #ddf4ff; stroke: #54aeff; stroke-width: 1.5; }
+    .card-plain { fill: #ffffff; stroke: #d0d7de; stroke-width: 1.5; stroke-dasharray: 5 4; }
+    .name { font: 600 19px -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif; fill: #1f2328; }
+    .sub { font: 13px -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif; fill: #57606a; }
+    .edge { font: italic 12.5px -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif; fill: #6e7781; }
+    .flow { stroke: #0969da; stroke-width: 2.2; fill: none; }
+    .back { stroke: #6e7781; stroke-width: 2; fill: none; stroke-dasharray: 6 4; }
+  </style>
+
+  <rect x="0" y="0" width="960" height="400" fill="#ffffff"/>
+
+  <!-- row 1 -->
+  <rect class="card" x="30" y="70" width="250" height="100" rx="10"/>
+  <text class="name" x="155" y="112" text-anchor="middle">sources</text>
+  <text class="sub" x="155" y="136" text-anchor="middle">transcripts, emails, notes</text>
+  <text class="sub" x="155" y="154" text-anchor="middle">saved intact, on your disk</text>
+
+  <rect class="card-key" x="340" y="70" width="280" height="100" rx="10"/>
+  <text class="name" x="480" y="108" text-anchor="middle">persona</text>
+  <text class="sub" x="480" y="132" text-anchor="middle">Fact · Inference · Assumption</text>
+  <text class="sub" x="480" y="152" text-anchor="middle">lint gate: blocks, never edits</text>
+
+  <rect class="card" x="680" y="70" width="250" height="100" rx="10"/>
+  <text class="name" x="805" y="108" text-anchor="middle">panel</text>
+  <text class="sub" x="805" y="132" text-anchor="middle">isolated reviewers</text>
+  <text class="sub" x="805" y="152" text-anchor="middle">+ one control reviewer</text>
+
+  <!-- row 2 -->
+  <rect class="card" x="680" y="250" width="250" height="100" rx="10"/>
+  <text class="name" x="805" y="288" text-anchor="middle">snapshot</text>
+  <text class="sub" x="805" y="312" text-anchor="middle">predictions frozen</text>
+  <text class="sub" x="805" y="332" text-anchor="middle">before the meeting</text>
+
+  <rect class="card-plain" x="340" y="250" width="280" height="100" rx="10"/>
+  <text class="name" x="480" y="295" text-anchor="middle">the meeting</text>
+  <text class="sub" x="480" y="320" text-anchor="middle">what the people actually did</text>
+
+  <rect class="card" x="30" y="250" width="250" height="100" rx="10"/>
+  <text class="name" x="155" y="288" text-anchor="middle">calibrate</text>
+  <text class="sub" x="155" y="312" text-anchor="middle">hits, misses, blind spots</text>
+  <text class="sub" x="155" y="332" text-anchor="middle">precision · coverage</text>
+
+  <!-- forward edges -->
+  <path class="flow" d="M 280 120 L 332 120" marker-end="url(#arrow)"/>
+  <text class="edge" x="306" y="106" text-anchor="middle">extract</text>
+
+  <path class="flow" d="M 620 120 L 672 120" marker-end="url(#arrow)"/>
+  <text class="edge" x="646" y="106" text-anchor="middle">convene</text>
+
+  <path class="flow" d="M 805 170 L 805 242" marker-end="url(#arrow)"/>
+  <text class="edge" x="815" y="212" text-anchor="start">freeze</text>
+
+  <path class="flow" d="M 680 300 L 628 300" marker-end="url(#arrow)"/>
+
+  <path class="flow" d="M 340 300 L 288 300" marker-end="url(#arrow)"/>
+  <text class="edge" x="314" y="286" text-anchor="middle">grade</text>
+
+  <!-- return edge: graded predictions go back into the profile -->
+  <path class="back" d="M 155 250 L 155 210 L 480 210 L 480 178" marker-end="url(#arrowSoft)"/>
+  <text class="edge" x="317" y="200" text-anchor="middle">what was right, and what the evidence missed</text>
+
+  <text class="sub" x="480" y="378" text-anchor="middle">Nothing enters a profile without a source. Nothing leaves the panel ungraded.</text>
+</svg>

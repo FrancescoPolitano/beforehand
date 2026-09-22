@@ -1,0 +1,21 @@
+{
+  "name": "beforehand",
+  "version": "1.0.0",
+  "description": "Rehearses how specific, known people will react to a document before they see it, from evidence-labeled profiles built out of the user's own sources.",
+  "author": {
+    "name": "Francesco Politano"
+  },
+  "homepage": "https://github.com/FrancescoPolitano/beforehand",
+  "repository": "https://github.com/FrancescoPolitano/beforehand",
+  "license": "MIT",
+  "keywords": [
+    "personas",
+    "stakeholders",
+    "review",
+    "evidence",
+    "calibration",
+    "rehearsal"
+  ],
+  "skills": "./skills/",
+  "agents": ["./agents/persona-reviewer.md"]
+}

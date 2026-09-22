@@ -1,0 +1,28 @@
+{
+  "same_source": [
+    "same (source|email|mail|thread|call|transcript|document)",
+    "ibid\\.?",
+    "idem",
+    "ditto"
+  ],
+  "empty_section": ["no evidence as of"],
+  "generic_speaker": [
+    "speaker", "participant", "attendee", "guest", "caller", "unknown", "anonymous", "user"
+  ],
+  "header_labels": [
+    "subject", "from", "to", "cc", "bcc", "date", "sent", "reply-to", "attachments",
+    "priority", "note", "n.b.", "nb", "p.s.", "ps", "source", "title", "ref", "reference",
+    "tel", "phone", "email", "e-mail", "mail", "web", "site", "address", "url", "link",
+    "signature", "version", "author", "status", "example", "warning", "important",
+    "objective", "purpose", "context"
+  ],
+  "snapshot_fields": {
+    "meeting": ["meeting", "meeting date"],
+    "review_date": ["review date", "date"],
+    "document": ["document", "doc"]
+  },
+  "watchlist_repeat_clause": ["if it repeats", "if this repeats", "what would change",
+                              "candidate for promotion"],
+  "excerpt_joiners": ["and"],
+  "filler_tokens": ["um", "uh", "erm", "er", "hmm", "ah", "eh"]
+}

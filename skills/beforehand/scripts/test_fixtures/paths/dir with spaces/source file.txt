@@ -1,0 +1,2 @@
+The migration window must not touch month-end closing, that is the only hard rule.
+We can accept one hour of read-only mode if it is announced two weeks ahead.

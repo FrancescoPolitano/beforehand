@@ -1,0 +1,22 @@
+{
+  "same_source": [
+    "stess[oa] (fonte|mail|email|thread|call|trascrizione|documento)"
+  ],
+  "empty_section": ["nessuna evidenza al"],
+  "generic_speaker": [
+    "partecipante", "ospite", "relatore", "sconosciuto", "sconosciuta", "utente", "intervenuto"
+  ],
+  "header_labels": [
+    "oggetto", "da", "a", "ccn", "data", "inviato", "rispondi a", "allegati", "priorita",
+    "nota", "fonte", "titolo", "riferimento", "telefono", "sito", "indirizzo", "firma",
+    "versione", "autore", "stato", "esempio", "attenzione", "importante", "obiettivo",
+    "scopo", "contesto"
+  ],
+  "snapshot_fields": {
+    "meeting": ["incontro", "data incontro"],
+    "review_date": ["data review", "data"],
+    "document": ["documento"]
+  },
+  "watchlist_repeat_clause": ["se si ripete"],
+  "excerpt_joiners": ["e", "und", "et"]
+}

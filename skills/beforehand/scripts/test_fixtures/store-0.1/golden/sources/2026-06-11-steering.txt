@@ -1,0 +1,17 @@
+2026-06-11 steering committee — Halden Logistics, platform review round two
+
+Astrid Lindqvist: Let's pick up the objections since kickoff. On the invoicing module: the trial you sent doesn't reconcile against our ledger without a manual step, and that's a recurring problem for finance every close. Also, every time invoicing runs late, my close calendar slips a day, and that keeps happening.
+
+Guest 1: Can I jump in here? I'm the one who answers to the depots if dispatch goes dark, so uptime during shift hours is what I actually get judged on.
+
+Jonas Berg: Noted. From my side, the objection I keep coming back to is the SSO story: every proposal so far treats single sign-on as a phase-two item, and I've said twice now that it has to ship on day one. Separately, support keeps promising a dedicated engineer and we get a ticket queue instead.
+
+Guest 1: The first thing I check in any proposal is whether it works offline for a shift, everything else is secondary.
+
+Astrid Lindqvist: On red lines: I will not sign anything with an annual contract over three years without a break clause. That's not moving. And if the vendor cannot show us referenceable customers at our volume, we stop the process.
+
+Guest 1: From the depot side, our drivers already fight with two mobile apps, and adding a third for dispatch confirmations will just get ignored on the floor.
+
+Jonas Berg: And mine: no production cutover on a Friday. We've had two outages from Friday cutovers already and I won't approve a third. I will not run this without a rollback window under thirty minutes either.
+
+Astrid Lindqvist: That's useful, thank you. Let's make sure the vendor addresses the reconciliation point and the contract term before the next round.

@@ -1,0 +1,35 @@
+Room call — synthetic fixture, no real people. One label covers a room.
+
+**Priya Raman:** Priya Raman here, thanks for joining. The agenda went out last night and
+Priya asked me to hold this to thirty minutes, so I will move fast.
+
+**Tom Beck:** Understood. I have the deployment notes open on my side.
+
+**Priya Raman:** The shape of the plan has not changed since the last call. We move the
+read traffic first, watch it for a week, then the writes, and we keep the old cluster warm
+until the finance close. That sequence is what the board signed off and I do not want to
+reopen it now.
+
+**Priya Raman:** Yes.
+
+**Priya Raman:** On the cost side we are still inside the envelope, but only because the
+parallel run is three weeks and not six. If it stretches we are over, and I would rather
+say that here than in the steering meeting a month from now.
+
+**Lena Voss:** From where I sit the rollback rehearsal is the part nobody has scheduled,
+and it is the only thing that would let us move the writes with a straight face.
+
+**Priya Raman:** That is fair, and finance is waiting on us either way, because Priya
+wants the number by Friday and the template they sent needs the per-region split.
+
+**Tom Beck:** I can have the per-region split by Thursday if the export job finishes.
+
+**Priya Raman:** Tom, do you want to add anything on the export job?
+
+**Priya Raman:** Just that the rollback is the risk, not the export.
+
+**Lena Voss:** Then I will book the rehearsal for the week after next and send the invite
+tonight.
+
+**Priya Raman:** Good. I will confirm the window with the board on Monday and we hold
+everything else as it is.

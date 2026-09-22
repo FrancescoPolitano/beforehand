@@ -1,0 +1,21 @@
+2026-05-06 kickoff call — Halden Logistics, freight-brokerage platform review
+
+Astrid Lindqvist: Thanks both for making time this morning. Before we get into the platform, I want to set expectations on how I'll judge this. The board holds me to gross margin per lane, not revenue growth, so that's the number I bring to every review.
+
+Jonas Berg: Understood. On my side, my mandate is uptime on the dispatch system, full stop. Whatever we pick has to keep that number intact.
+
+Astrid Lindqvist: Right, and if working capital creeps up again this quarter, that lands on me personally, so financing terms matter as much as the sticker price.
+
+Jonas Berg: Same logic on my end. A failed migration is the one thing that gets me fired, not a slow rollout, so I'd rather go slower and safer.
+
+Astrid Lindqvist: On evaluating the proposal itself: walk me through the downside before you show me the upside. I don't want the optimistic case first.
+
+Jonas Berg: For me it's the rollback plan. Show me the rollback plan before the feature list, or I can't sign off.
+
+Astrid Lindqvist: And I don't approve anything without a named baseline for the savings. Vague percentages don't survive my review.
+
+Jonas Berg: Similarly, I weigh integration effort heavier than the license cost. A cheap license with six months of integration work is not cheap.
+
+Astrid Lindqvist: Good, that's aligned with what finance will ask. Let's bring the vendor back with numbers that answer both of those.
+
+Jonas Berg: Agreed. I'll send over the current architecture doc so they can scope the integration properly.

@@ -1,0 +1,52 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "beforehand"
+version = "1.0.0"
+description = "Rehearses how specific, known people will react to a document before they see it, from evidence-labeled profiles built out of the user's own sources."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.9"
+authors = [{name = "Francesco Politano"}]
+keywords = ["claude-code", "skill", "personas", "stakeholders", "review", "calibration"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Operating System :: OS Independent",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/FrancescoPolitano/beforehand"
+Repository = "https://github.com/FrancescoPolitano/beforehand"
+
+[project.scripts]
+beforehand = "beforehand_cli.cli:main"
+
+# The wheel: the package plus the skill and the reviewer prompt as package data, where
+# beforehand_cli.cli.locate() looks for them (beforehand_cli/_data/). The skill is mapped with
+# `sources` rather than force-include so the exclude patterns apply to it; the agent is one
+# file, so force-include is enough. The CLI's own test suite stays in the repository (it
+# compares against dev/build_skill.sh).
+[tool.hatch.build.targets.wheel]
+only-include = ["beforehand_cli", "skills/beforehand"]
+exclude = ["__pycache__", "*.pyc", ".DS_Store", "beforehand_cli/test_cli.py"]
+
+[tool.hatch.build.targets.wheel.sources]
+"skills/beforehand" = "beforehand_cli/_data/skills/beforehand"
+
+[tool.hatch.build.targets.wheel.force-include]
+"agents/persona-reviewer.md" = "beforehand_cli/_data/agents/persona-reviewer.md"
+
+[tool.hatch.build.targets.sdist]
+only-include = ["beforehand_cli", "skills/beforehand", "agents/persona-reviewer.md", "README.md", "LICENSE", "pyproject.toml"]
+exclude = ["__pycache__", "*.pyc", ".DS_Store"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]

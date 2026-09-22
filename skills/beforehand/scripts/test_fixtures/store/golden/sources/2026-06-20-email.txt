@@ -1,0 +1,11 @@
+2026-06-20 email thread — Halden Logistics, follow-up after steering
+
+Astrid Lindqvist: Following up in writing since we're short on time before the next round. On tone: I raise things directly in the room, and I don't email a complaint I haven't already said out loud. If I go quiet in a meeting, it means I've already decided against something, not that I agree.
+
+Jonas Berg: Noted, useful to know. On my side, when I disagree I go quiet in the meeting and send the real objection by email afterwards, like this one. Don't read silence from me as a yes either.
+
+Astrid Lindqvist: On where this fits with the rest of the room: I side with Jonas over the vendor's timeline every time, we've both been burned by an optimistic go-live date before. On contract term, if operations pushes for a shortcut I overrule that, it is my call to make.
+
+Jonas Berg: Agreed, and separately: on contract terms I defer to Astrid, that's her call to make and I won't second-guess it in front of the vendor. When the depots and finance disagree on scope, I side with whoever protects uptime, most days that is the depots.
+
+Astrid Lindqvist: Good, let's hold that line together in the next session.

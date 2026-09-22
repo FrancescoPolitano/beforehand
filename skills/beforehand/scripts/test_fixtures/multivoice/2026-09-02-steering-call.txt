@@ -1,0 +1,25 @@
+Steering call — synthetic fixture, no real people.
+
+**Dana Whitfield:** Right, let's start. The migration window is the thing I need settled
+today, because procurement closes on the twentieth.
+
+**+44 7700 *** **31:** On the technical side the blocker is the replication lag. If we cut
+over with more than thirty seconds of lag we lose the last batch of orders, and I am not
+signing that off.
+
+**Dana Whitfield:** Understood. Marco, does that change your number?
+
+**Marco Ferri:** It changes the shape of it, not the total. **Guest:** sorry, can you
+repeat the lag figure? Marco again: thirty seconds, and it is measured at the replica, not
+at the application.
+
+**Ines Okafor:** From where I sit the risk is the rollback. We have never rehearsed one
+under load and I would rather spend two days on that than on the cutover script.
+
+**+44 7700 *** **31:** Agreed on the rehearsal. I can free a staging cluster for it next
+week.
+
+**Dana Whitfield:** Then that is the plan: rehearse the rollback, hold the window, and I
+will tell procurement we confirm on the eighteenth.
+
+**Ines Okafor:** Works for me.

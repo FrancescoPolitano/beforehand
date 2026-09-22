@@ -1,0 +1,11 @@
+# dev/public-identity.txt — the maintainer's public identity, published on purpose (SPEC-1.0 §1).
+# dev/check_generality.sh removes every occurrence of each string below from what its
+# name-pattern scan and its term-list scan see, in every file, before matching. Only exact,
+# case-sensitive occurrences are exempt: any other spelling, a first or last name on its own,
+# or a longer name that merely starts with one of these (the remainder is still scanned)
+# still fails the gate. The path scan and the junk scan ignore this file.
+# One string per line; `#` lines and blank lines are ignored; letters, digits, space and
+# `/ . _ -` only (the gate refuses any other character here).
+Francesco Politano
+FrancescoPolitano/beforehand
+FrancescoPolitano

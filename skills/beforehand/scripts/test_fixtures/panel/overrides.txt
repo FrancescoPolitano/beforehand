@@ -1,0 +1,4 @@
+# Role-generic confirmations, one row per line: <slug>#<n>=yes|no: <reason>
+# <n> is the position of the objection inside that persona's own block, counting from 1.
+
+cto-jonas#1=yes: the control raised the same cutover risk in different words, so the anchor moved but the substance did not
