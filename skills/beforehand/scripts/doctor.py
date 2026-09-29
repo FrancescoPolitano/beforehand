@@ -40,10 +40,26 @@ coverage or snapshot scan, and a snapshot the scan skipped as unreadable. An unk
 the checks that read the locale (lint, coverage, snapshots) are then skipped instead of each
 failing once per persona.
 
+The linter is checked before it is trusted. Once per run, before any persona, a canary
+persona is written to a temporary directory — two Fact tags against one source, one quote
+that is in it and one that is not — and linted through `lint_one`, the same call every real
+persona goes through. The verdict must be exactly VERIFIED then NOT FOUND. Anything else
+(a linter that stopped parsing the tag grammar, that reads every source as empty, that
+raises) is a `gap` item, and the count of checked personas is reported as 0: a linter that
+passes a quote it should have refused has checked nothing. This is the failure that once let
+five profiles read "all good" for two weeks, and a fixed parser only proves it for the
+formats someone thought to test.
+
+The last line carries its denominator: `doctor: healthy (12 of 14 personas checked)` says how
+many personas the linter actually returned a verdict for (`pass`, `warn` or `fail`; never a
+`-` or an `error`), out of how many the store holds. A green light with no count behind it
+does not distinguish "every check passed" from "no check ran".
+
 Staleness is measured against `--today` (default: the real date) so that a suite can pin a
 date instead of depending on the day it runs. Exit is 0 whatever the store contains: this is
 a report. It reads store files only — never `SKILL.md` or anything outside the store — and it
-never writes, not even an index.
+never writes into the store, not even an index (the canary lives in a temporary directory
+that is removed before the report is printed).
 
 Usage:
   doctor.py [--store PATH] [--context CTX] [--today YYYY-MM-DD] [--json]
@@ -56,6 +72,7 @@ import argparse  # noqa: E402
 import datetime as dt  # noqa: E402
 import json  # noqa: E402
 import re  # noqa: E402
+import tempfile  # noqa: E402
 from pathlib import Path  # noqa: E402
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -199,6 +216,51 @@ def pending_offers(store, only_context=None):
     return out
 
 
+# --------------------------------------------------------------------------- the linter
+def lint_one(path, sources_root, store=None):
+    """The one call through which every persona — and the canary — is linted. A single
+    function on purpose: the self-check below proves the linter works only if it takes the
+    path the real personas take, and two call sites drift apart without anyone noticing."""
+    return _vq.lint_persona(path, sources_root, store)
+
+
+# The canary: one quote the source holds, one it does not. Both are synthetic.
+CANARY_SOURCE = "the pilot starts with two teams in march and runs for six weeks.\n"
+CANARY_PERSONA = (
+    "## Positions\n"
+    "- Said (Fact — \"the pilot starts with two teams\", canary.txt, private-communication, "
+    "human-authored, 2026-01-01)\n"
+    "- Never said (Fact — \"the pilot was cancelled before it began\", canary.txt, "
+    "private-communication, human-authored, 2026-01-01)\n")
+CANARY_EXPECTED = ["VERIFIED", "NOT FOUND"]
+
+
+def lint_selfcheck():
+    """-> {"ok", "expected", "got"}: the linter run on the canary through `lint_one`. `got` is
+    the per-excerpt status list, or the exception text when the linter raised. ok only when
+    the statuses are exactly CANARY_EXPECTED and the persona status is `fail`: a linter that
+    finds the true quote but also passes the false one, or refuses both, is broken either
+    way, and a broken linter's column is worth nothing on every persona after it."""
+    try:
+        with tempfile.TemporaryDirectory() as tmp:
+            d = Path(tmp)
+            (d / "canary.txt").write_text(CANARY_SOURCE, encoding="utf-8")
+            (d / "canary.md").write_text(CANARY_PERSONA, encoding="utf-8")
+            res = lint_one(d / "canary.md", d)
+        got = [r["status"] for r in res["results"]]
+        ok = got == CANARY_EXPECTED and res["status"] == "fail"
+    except Exception as e:                       # a self-check that crashed did not pass
+        got = "error (%s: %s)" % (e.__class__.__name__, str(e)[:80])
+        ok = False
+    return {"ok": ok, "expected": CANARY_EXPECTED, "got": got}
+
+
+def selfcheck_message(sc):
+    got = sc["got"] if isinstance(sc["got"], str) else ", ".join(sc["got"]) or "nothing"
+    return ("lint self-check: expected %s, got %s — the linter is broken, so no lint "
+            "verdict in this report can be trusted" % (", ".join(sc["expected"]), got))
+
+
 # --------------------------------------------------------------------------- the scan
 def scan_persona(store, ctx, path, sources_root, today, items, locale_ok=True):
     """One persona row, plus whatever it contributes to `items`. Never raises: a store with
@@ -241,7 +303,7 @@ def scan_persona(store, ctx, path, sources_root, today, items, locale_ok=True):
         if not locale_ok:
             lint = {"label": "-", "status": "-"}
         else:
-            lint = _vq.lint_persona(path, sources_root, store)
+            lint = lint_one(path, sources_root, store)
         lint_label, lint_status = lint["label"], lint["status"]
     except Exception as e:                       # one bad file must not abort the diagnosis
         # The exception text, not just its class: "error (RuntimeError)" in a column tells
@@ -334,7 +396,8 @@ def scan(store, only_context=None, today=None):
     today = today or dt.date.today()
     st = Store(store)
     report = {"today": today.isoformat(), "contexts": [], "personas": [], "snapshots": [],
-              "gaps": [], "offers": [], "items": [], "summary": ""}
+              "gaps": [], "offers": [], "items": [], "lint_selfcheck": None,
+              "personas_total": 0, "personas_checked": 0, "summary": ""}
     items = report["items"]
 
     if not Path(store).is_dir():
@@ -354,6 +417,12 @@ def scan(store, only_context=None, today=None):
                       "message": "locale: %s" % locale_err})
         snap_rows = []
     else:
+        # The linter on a quote known to be wrong, before it is run on anything real: a
+        # checker that finds nothing wrong here has found nothing at all.
+        report["lint_selfcheck"] = lint_selfcheck()
+        if not report["lint_selfcheck"]["ok"]:
+            items.append({"kind": "gap", "context": "", "file": "",
+                          "message": selfcheck_message(report["lint_selfcheck"])})
         snap_rows = scan_snapshots(store, only_context, items)
 
     for ctx in contexts:
@@ -429,8 +498,17 @@ def scan(store, only_context=None, today=None):
                                  "declined)" % (offer["doc"], offer["ts"] or "?")})
 
     report["gaps"] = [i for i in items if i["kind"] in ("gap", "schema")]
+    # "checked" is a persona the linter returned a verdict for — and, if the linter failed its
+    # own check, none: a verdict from a broken linter is not a check that happened.
+    sc = report["lint_selfcheck"]
+    report["personas_total"] = len(report["personas"])
+    report["personas_checked"] = (sum(1 for p in report["personas"]
+                                      if p["lint_status"] in ("pass", "warn", "fail"))
+                                  if sc and sc["ok"] else 0)
     n = len(items)
-    report["summary"] = "doctor: healthy" if n == 0 else "doctor: %d items need attention" % n
+    report["summary"] = "%s (%d of %d personas checked)" % (
+        "doctor: healthy" if n == 0 else "doctor: %d items need attention" % n,
+        report["personas_checked"], report["personas_total"])
     return report
 
 

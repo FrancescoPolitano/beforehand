@@ -6,7 +6,7 @@
 #
 # Order: generality (patterns only) -> router budget -> one norm, one file -> anchor targets
 # resolve (every anchor on the line) -> the test suite -> golden-store expectations
-# (idempotent reindex, doctor: healthy) -> deterministic index (real writes on copies of the
+# (idempotent reindex, doctor: healthy with its 3 of 3 count) -> deterministic index (real writes on copies of the
 # golden store, on two days when its personas are stale: byte-identical) -> the 3.9 syntax
 # floor (dev/check_floor.py, an AST check, since this machine may have no 3.9 interpreter of
 # its own — see check_all_versions.sh) -> ruff -> evals (checkers-only, no host CLI, nothing
@@ -131,7 +131,8 @@ if [ $rc -eq 0 ]; then echo "tests: ok"; else echo "tests: FAIL"; status=1; fi
 
 # --------------------------------------------------------------------- 6. golden-store expectations
 # reindex --dry-run on the golden context must report golden/INDEX.md unchanged (the
-# committed fixture is already up to date), and doctor must call it healthy.
+# committed fixture is already up to date), and doctor must call it healthy WITH the count
+# (3 of 3 personas checked): a healthy line over 0 of 3 would mean the linter never ran.
 section "golden"
 golden_store="$scripts/test_fixtures/store"
 reindex_out=$("$PYTHON" "$entry" reindex --store "$golden_store" --context golden --dry-run 2>&1)
@@ -144,7 +145,7 @@ doctor_out=$("$PYTHON" "$entry" doctor --store "$golden_store" --context golden 
 doctor_rc=$?
 doctor_last=$(printf '%s\n' "$doctor_out" | tail -1)
 doctor_ok=0
-[ $doctor_rc -eq 0 ] && [ "$doctor_last" = "doctor: healthy" ] && doctor_ok=1
+[ $doctor_rc -eq 0 ] && [ "$doctor_last" = "doctor: healthy (3 of 3 personas checked)" ] && doctor_ok=1
 printf '%s\n' "$reindex_out"
 printf '%s\n' "$doctor_out"
 if [ "$reindex_ok" -eq 1 ] && [ "$doctor_ok" -eq 1 ]; then
@@ -152,7 +153,7 @@ if [ "$reindex_ok" -eq 1 ] && [ "$doctor_ok" -eq 1 ]; then
 else
     echo "golden: FAIL"
     [ "$reindex_ok" -eq 1 ] || echo "  reindex --dry-run did not report golden/INDEX.md unchanged"
-    [ "$doctor_ok" -eq 1 ] || echo "  doctor did not print the pinned 'doctor: healthy' line"
+    [ "$doctor_ok" -eq 1 ] || echo "  doctor did not print the pinned 'doctor: healthy (3 of 3 personas checked)' line"
     status=1
 fi
 

@@ -117,7 +117,8 @@ checks.append(("panel dispatches to its module instead of the placeholder",
 r = run("--store", GOLDEN, "doctor", "--context", "golden", "--today", "2026-09-17")
 checks.append(("doctor exits 0 through the entrypoint", r.returncode == 0, (r.returncode, r.stderr)))
 checks.append(("doctor prints its pinned summary line",
-               r.stdout.strip().splitlines()[-1] == "doctor: healthy", r.stdout))
+               r.stdout.strip().splitlines()[-1]
+               == "doctor: healthy (3 of 3 personas checked)", r.stdout))
 
 # ---- running a module directly still works and prints the deprecation line --------
 with tempfile.TemporaryDirectory() as tmp:

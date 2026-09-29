@@ -412,7 +412,11 @@ handle — because an edit would stop that cycle grading.
 **`doctor` and its last line.** `doctor: healthy` is never printed over a check that could not
 run: a lint or a coverage check that raised is listed as a gap with the exception text, the
 same as a lint that failed, and a snapshot scan that crashed or skipped an unreadable file is
-an item too.
+an item too. The line carries its denominator — `doctor: healthy (12 of 14 personas checked)`
+— so a green light cannot stand in for a check that never ran. And before any persona is
+linted, the linter is run on a canary that holds one quote its source contains and one it
+does not, through the same call the real personas take: if it does not answer `VERIFIED`
+then `NOT FOUND`, the linter itself is reported broken and the count reads 0 of N.
 
 ## Host support
 

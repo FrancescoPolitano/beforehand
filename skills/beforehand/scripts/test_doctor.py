@@ -8,6 +8,7 @@ and the fixtures are shared with the other suites.
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -69,7 +70,8 @@ def copy_store(name, contexts):
 # ------------------------------------------------------------------ the golden store
 r = doctor("--store", FIXTURE, "--context", "golden")
 checks.append(("doctor on the golden context exits 0", r.returncode == 0, (r.returncode, r.stderr)))
-checks.append(("golden store is healthy", last_line(r.stdout) == "doctor: healthy", r.stdout))
+checks.append(("golden store is healthy",
+               last_line(r.stdout) == "doctor: healthy (3 of 3 personas checked)", r.stdout))
 for token in ("context: golden", "personas", "snapshots", "gaps", "offers",
               "cfo-astrid", "coo-mira", "cto-jonas", "docs/brief-q3.md"):
     checks.append((f"human output carries {token!r}", token in r.stdout, r.stdout))
@@ -100,8 +102,8 @@ checks.append(("golden snapshot records the user decisions",
 checks.append(("golden has no gaps", data.get("gaps") == [], data.get("gaps")))
 checks.append(("golden has no offers pending", data.get("offers") == [], data.get("offers")))
 checks.append(("golden has no items", data.get("items") == [], data.get("items")))
-checks.append(("json mirrors the pinned summary line", data.get("summary") == "doctor: healthy",
-               data.get("summary")))
+checks.append(("json mirrors the pinned summary line",
+               data.get("summary") == "doctor: healthy (3 of 3 personas checked)", data.get("summary")))
 checks.append(("json echoes the --today used for staleness", data.get("today") == TODAY,
                data.get("today")))
 
@@ -110,8 +112,9 @@ r = doctor("--store", FIXTURE)
 checks.append(("doctor over every context exits 0", r.returncode == 0, (r.returncode, r.stderr)))
 summary = last_line(r.stdout)
 checks.append(("summary line has the pinned shape",
-               summary == "doctor: healthy" or
-               (summary.startswith("doctor: ") and summary.endswith(" items need attention")),
+               summary.endswith(" personas checked)") and
+               (summary.startswith("doctor: healthy (") or
+                re.match(r"doctor: \d+ items need attention \(", summary) is not None),
                summary))
 
 # ------------------------------------------------------------------ staleness is dated
@@ -166,7 +169,8 @@ r = doctor("--store", store5)
 checks.append(("the modified store exits 0 like any report", r.returncode == 0,
                (r.returncode, r.stderr)))
 checks.append(("five items need attention",
-               last_line(r.stdout) == "doctor: 5 items need attention", r.stdout))
+               last_line(r.stdout) == "doctor: 5 items need attention (6 of 6 personas checked)",
+               r.stdout))
 
 r = doctor("--store", store5, "--json")
 data = loads(r.stdout) or {}
@@ -239,7 +243,8 @@ checks.append(("the failing persona still carries its lint label in the table",
                row.get("lint_status") == "fail" and row.get("lint", "").startswith("fail"),
                row.get("lint")))
 checks.append(("a store with a failing persona is never healthy",
-               last_line(doctor("--store", store_lint).stdout) == "doctor: 1 items need attention",
+               last_line(doctor("--store", store_lint).stdout)
+               == "doctor: 1 items need attention (3 of 3 personas checked)",
                doctor("--store", store_lint).stdout))
 checks.append(("lint warn and thin coverage stay informational",
                all("lint warn" not in i["message"] for i in
@@ -256,7 +261,8 @@ store_ghost.mkdir()
      "note": "offered"}) + "\n", encoding="utf-8")
 r = doctor("--store", store_ghost)
 checks.append(("an offer for a context with no directory is counted",
-               last_line(r.stdout) == "doctor: 1 items need attention", r.stdout))
+               last_line(r.stdout) == "doctor: 1 items need attention (0 of 0 personas checked)",
+               r.stdout))
 checks.append(("and it is printed, not only counted",
                "ghost" in r.stdout and "brief.md" in r.stdout, r.stdout))
 r5 = doctor("--store", store5)
@@ -268,7 +274,8 @@ checks.append(("the roll-up prints one line per item, count included",
 # ------------------------------------------------------------------ a store or context that is not there
 r = doctor("--store", TMP / "no-such-store-at-all")
 checks.append(("a store that does not exist is never healthy",
-               r.returncode == 0 and last_line(r.stdout) == "doctor: 1 items need attention",
+               r.returncode == 0
+               and last_line(r.stdout) == "doctor: 1 items need attention (0 of 0 personas checked)",
                (r.returncode, r.stdout)))
 data = loads(doctor("--store", TMP / "no-such-store-at-all", "--json").stdout) or {}
 checks.append(("the missing store is one gap item",
@@ -277,7 +284,8 @@ checks.append(("the missing store is one gap item",
                data.get("items")))
 r = doctor("--store", FIXTURE, "--context", "no-such-context")
 checks.append(("a context that does not exist is never healthy",
-               r.returncode == 0 and last_line(r.stdout) == "doctor: 1 items need attention",
+               r.returncode == 0
+               and last_line(r.stdout) == "doctor: 1 items need attention (0 of 0 personas checked)",
                (r.returncode, r.stdout)))
 data = loads(doctor("--store", FIXTURE, "--context", "no-such-context", "--json").stdout) or {}
 checks.append(("the missing context is one gap item naming it",
@@ -302,7 +310,8 @@ checks.append(("the schema item names the version and the remedy",
                and any("schema none" in i["message"] for i in items),
                [i.get("message") for i in items]))
 checks.append(("the schema store reports two items",
-               last_line(doctor("--store", store_s).stdout) == "doctor: 2 items need attention",
+               last_line(doctor("--store", store_s).stdout)
+               == "doctor: 2 items need attention (3 of 3 personas checked)",
                doctor("--store", store_s).stdout))
 
 # ------------------------------------------------------------------ frontmatter outside the subset
@@ -336,7 +345,7 @@ checks.append(("a document changed since its snapshot is a snapshot item",
 r = run(ENTRY, "--store", FIXTURE, "doctor", "--context", "golden", "--today", TODAY)
 checks.append(("beforehand.py doctor exits 0", r.returncode == 0, (r.returncode, r.stderr)))
 checks.append(("beforehand.py doctor prints the pinned summary",
-               last_line(r.stdout) == "doctor: healthy", r.stdout))
+               last_line(r.stdout) == "doctor: healthy (3 of 3 personas checked)", r.stdout))
 r = run(ENTRY, "--help")
 checks.append(("--help no longer defers doctor to a later task",
                "doctor" in r.stdout and "doctor" not in
@@ -448,14 +457,14 @@ err_msgs = [i["message"] for i in rep_err["items"]]
 checks.append(("a lint that crashed is reported as an item carrying the exception text",
                any("lint error (RuntimeError: boom)" in m for m in err_msgs), err_msgs))
 checks.append(("a store whose lint crashed is not healthy",
-               rep_err["summary"] != "doctor: healthy", rep_err["summary"]))
+               not rep_err["summary"].startswith("doctor: healthy"), rep_err["summary"]))
 checks.append(("the persona row records lint_status 'error'",
                bool(rep_err["personas"])
                and all(p.get("lint_status") == "error" for p in rep_err["personas"]),
                [p.get("lint_status") for p in rep_err["personas"]]))
 checks.append(("the golden store still reads healthy once the linter is restored",
                doc.scan(FIXTURE, only_context="golden",
-                        today=dt.date(2026, 9, 17))["summary"] == "doctor: healthy",
+                        today=dt.date(2026, 9, 17))["summary"] == "doctor: healthy (3 of 3 personas checked)",
                doc.scan(FIXTURE, only_context="golden", today=dt.date(2026, 9, 17))["summary"]))
 
 # ---- and the same for coverage: it set the column to `error` but appended no item, so
@@ -472,11 +481,99 @@ checks.append(("a coverage check that crashed is reported as an item carrying th
                "text", any("coverage error (RuntimeError: boom)" in m for m in cov_msgs),
                cov_msgs))
 checks.append(("a store whose coverage check crashed is not healthy",
-               rep_cov["summary"] != "doctor: healthy", rep_cov["summary"]))
+               not rep_cov["summary"].startswith("doctor: healthy"), rep_cov["summary"]))
 checks.append(("the persona row records coverage 'error'",
                bool(rep_cov["personas"])
                and all(p.get("coverage_level") == "error" for p in rep_cov["personas"]),
                [p.get("coverage_level") for p in rep_cov["personas"]]))
+
+# ---- the linter is checked before it is trusted: a canary with one quote its source holds
+# and one it does not goes through the same call as every persona, before any of them. Five
+# profiles once read "all good" for two weeks because the parser skipped a tag form it did
+# not know and "found nothing to check" became "found nothing wrong". A parser fix proves
+# the formats someone thought of; a quote known to be wrong proves the checker still looks.
+rep_ok = doc.scan(FIXTURE, only_context="golden", today=dt.date(2026, 9, 17))
+sc = rep_ok.get("lint_selfcheck") or {}
+checks.append(("self-check: on a working linter the canary comes back VERIFIED, NOT FOUND",
+               sc.get("ok") is True and sc.get("got") == ["VERIFIED", "NOT FOUND"], sc))
+checks.append(("self-check: the json carries the count behind the summary",
+               rep_ok.get("personas_total") == 3 and rep_ok.get("personas_checked") == 3,
+               (rep_ok.get("personas_total"), rep_ok.get("personas_checked"))))
+checks.append(("self-check: the golden summary states 3 of 3",
+               rep_ok["summary"] == "doctor: healthy (3 of 3 personas checked)", rep_ok["summary"]))
+
+SELFCHECK_PINNED = ("lint self-check: expected VERIFIED, NOT FOUND, got VERIFIED, VERIFIED — the "
+                    "linter is broken, so no lint verdict in this report can be trusted")
+
+
+def _passes_everything(*_a, **_kw):
+    """A linter that never refuses a quote: the failure the canary exists for."""
+    return {"results": [{"status": "VERIFIED"}, {"status": "VERIFIED"}], "status": "pass",
+            "label": "pass (0 issues)"}
+
+
+def _refuses_everything(*_a, **_kw):
+    """A linter that reads every source as empty: `fail` on the canary is not enough."""
+    return {"results": [{"status": "NOT FOUND"}, {"status": "NOT FOUND"}], "status": "fail",
+            "label": "fail (2 not found)"}
+
+
+store_pass = copy_store("lint-passes-everything", ["golden"])
+try:
+    doc._vq.lint_persona = _passes_everything
+    rep_pass = doc.scan(store_pass, today=dt.date(2026, 9, 17))
+finally:
+    doc._vq.lint_persona = saved_lint
+pass_items = [i for i in rep_pass["items"] if i["message"].startswith("lint self-check")]
+checks.append(("self-check: a linter that passes the wrong quote is one gap item, pinned text",
+               len(pass_items) == 1 and pass_items[0]["kind"] == "gap"
+               and pass_items[0]["message"] == SELFCHECK_PINNED, rep_pass["items"]))
+checks.append(("self-check: a store whose linter passes everything is never healthy",
+               not rep_pass["summary"].startswith("doctor: healthy"), rep_pass["summary"]))
+checks.append(("self-check: every persona still shows the (worthless) verdict in its row",
+               all(p["lint_status"] == "pass" for p in rep_pass["personas"]),
+               [p["lint_status"] for p in rep_pass["personas"]]))
+checks.append(("self-check: but the count says 0 of 3 were checked",
+               rep_pass["personas_checked"] == 0 and rep_pass["personas_total"] == 3
+               and rep_pass["summary"].endswith("(0 of 3 personas checked)"), rep_pass["summary"]))
+checks.append(("self-check: it is a gap, no new kind was invented for it",
+               all(i["kind"] in doc.KINDS for i in rep_pass["items"]),
+               [i["kind"] for i in rep_pass["items"]]))
+
+try:
+    doc._vq.lint_persona = _refuses_everything
+    rep_refuse = doc.scan(store_pass, today=dt.date(2026, 9, 17))
+finally:
+    doc._vq.lint_persona = saved_lint
+checks.append(("self-check: a linter that refuses the true quote too is broken as well",
+               any("got NOT FOUND, NOT FOUND" in i["message"] for i in rep_refuse["items"])
+               and rep_refuse["personas_checked"] == 0, rep_refuse["items"]))
+
+# the canary and the personas share one call: a fake put on `lint_one` reaches both
+saved_one = doc.lint_one
+try:
+    doc.lint_one = _passes_everything
+    rep_one = doc.scan(store_pass, today=dt.date(2026, 9, 17))
+finally:
+    doc.lint_one = saved_one
+checks.append(("self-check: the canary goes through lint_one, the same call as the personas",
+               any(i["message"] == SELFCHECK_PINNED for i in rep_one["items"])
+               and all(p["lint"] == "pass (0 issues)" for p in rep_one["personas"]),
+               (rep_one["items"], [p["lint"] for p in rep_one["personas"]])))
+
+# a linter that crashed on the canary is reported as such, on top of the per-persona items
+checks.append(("self-check: a linter that raises fails the self-check with the exception text",
+               any(m.startswith("lint self-check: expected VERIFIED, NOT FOUND, got error "
+                                "(RuntimeError: boom)") for m in err_msgs), err_msgs))
+checks.append(("self-check: and the count under a crashed linter is 0 of 3",
+               rep_err["personas_checked"] == 0 and rep_err["summary"].endswith(
+                   "(0 of 3 personas checked)"), rep_err["summary"]))
+checks.append(("self-check: the linter restored, the golden context is 3 of 3 again",
+               doc.scan(FIXTURE, only_context="golden", today=dt.date(2026, 9, 17))["summary"]
+               == "doctor: healthy (3 of 3 personas checked)", None))
+checks.append(("self-check: doctor still writes nothing into the store",
+               state(store_pass) == state(copy_store("lint-untouched", ["golden"])),
+               "store changed"))
 
 # ------------------------------------------------------- FR-1.1: a pre-0.2 snapshot is named
 # A snapshot frozen before the 0.2 shape existed used to be reported only through its
@@ -524,7 +621,7 @@ checks.append(("doctor still writes nothing while reading a ledger",
 
 checks.append(("the golden fixture itself is 0.2-shaped, so none of this touches it",
                doc.scan(FIXTURE, only_context="golden",
-                        today=dt.date(2026, 9, 17))["summary"] == "doctor: healthy",
+                        today=dt.date(2026, 9, 17))["summary"] == "doctor: healthy (3 of 3 personas checked)",
                doc.scan(FIXTURE, only_context="golden",
                         today=dt.date(2026, 9, 17))["summary"]))
 
@@ -548,7 +645,7 @@ checks.append(("E4: a crashed snapshot scan is an item, not a stderr warning",
                len(snap_items) == 1 and "permission denied" in snap_items[0]["message"],
                rep["items"]))
 checks.append(("E4: doctor is not healthy over a crashed snapshot scan",
-               rep["summary"] != "doctor: healthy", rep["summary"]))
+               not rep["summary"].startswith("doctor: healthy"), rep["summary"]))
 
 # ---- 0.3.1 E4 (with FR-3.7): pending.scan skips an unreadable snapshot with a per-file
 # stderr warning instead of raising, and reports it through its `unreadable` list; doctor
@@ -593,6 +690,8 @@ r = run(DOCTOR, "--today", TODAY, "--store", FIXTURE, env_extra={"BEFOREHAND_LOC
 checks.append(("locale: the human report ends on the pinned line and shows the item",
                last_line(r.stdout).startswith("doctor: ") and "locale: " in r.stdout,
                r.stdout[-400:]))
+checks.append(("locale: with lint skipped, the count says 0 of 5 personas checked",
+               last_line(r.stdout).endswith("(0 of 5 personas checked)"), last_line(r.stdout)))
 
 shutil.rmtree(TMP, ignore_errors=True)
 

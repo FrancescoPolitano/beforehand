@@ -140,8 +140,8 @@ skipped; it prints the offending `file:line` and the anchor it could not resolve
 suite (`beforehand.py test`; a suite that crashes, prints `0/0` or no summary line is
 `<suite>: no checks ran` and fails, and a failing suite prints its `FAIL ` lines and the last
 20 lines of its stderr) -> golden-store expectations (`reindex --dry-run` on the golden
-context reports `golden/INDEX.md` unchanged; `doctor` prints the pinned `doctor: healthy`
-line) -> a deterministic-index check (FR-4.7: real `reindex` writes on temporary copies of
+context reports `golden/INDEX.md` unchanged; `doctor` prints the pinned `doctor: healthy (3 of 3
+personas checked)` line) -> a deterministic-index check (FR-4.7: real `reindex` writes on temporary copies of
 the golden store with `reindex._today` mocked to 2027-01-10 and 2027-01-11, days on which every
 golden persona is stale; copy A is written on the first day, copy B on the first day and
 then again on the second, and every INDEX.md of A and B must be byte-identical — comparing
