@@ -11,7 +11,7 @@
       "name": "beforehand",
       "source": "./",
       "description": "Rehearses how specific, known people will react to a document before they see it, from evidence-labeled profiles built out of the user's own sources.",
-      "version": "1.0.0"
+      "version": "1.0.1"
     }
   ]
 }

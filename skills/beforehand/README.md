@@ -1,6 +1,6 @@
 # beforehand
 
-![version 1.0.0](https://img.shields.io/badge/version-1.0.0-0969da)
+![version 1.0.1](https://img.shields.io/badge/version-1.0.1-0969da)
 ![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-3776ab)
 ![stdlib only](https://img.shields.io/badge/dependencies-stdlib%20only-2da44e)
 ![local-first, no telemetry](https://img.shields.io/badge/data-local--first%20%C2%B7%20no%20telemetry-8250df)
@@ -311,7 +311,7 @@ uvx --from git+https://github.com/FrancescoPolitano/beforehand beforehand instal
 ```
 
 **Claude Cowork** — expected to work, not yet verified end to end. Install
-`beforehand-1.0.0.skill` from the repository's Releases page (or build it with
+`beforehand-1.0.1.skill` from the repository's Releases page (or build it with
 `uvx --from git+https://github.com/FrancescoPolitano/beforehand beforehand bundle`) the way the
 host installs a skill, then point the store at a folder you keep:
 

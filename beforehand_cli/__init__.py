@@ -6,4 +6,4 @@ import sys
 # `python3 -B -m beforehand_cli` (or PYTHONDONTWRITEBYTECODE=1) is what keeps a checkout clean.
 sys.dont_write_bytecode = True
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"

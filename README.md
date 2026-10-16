@@ -1,6 +1,6 @@
 # beforehand
 
-[![version 1.0.0](https://img.shields.io/badge/version-1.0.0-0969da)](CHANGELOG.md)
+[![version 1.0.1](https://img.shields.io/badge/version-1.0.1-0969da)](CHANGELOG.md)
 ![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-3776ab)
 ![stdlib only](https://img.shields.io/badge/dependencies-stdlib%20only-2da44e)
 ![local-first, no telemetry](https://img.shields.io/badge/data-local--first%20%C2%B7%20no%20telemetry-8250df)
@@ -50,7 +50,7 @@ It copies the skill to `~/.claude/skills/beforehand` and the reviewer agent to
 wrote ~/.claude/skills/beforehand/ (181 files)
 wrote ~/.claude/skills/beforehand/.installed-by-beforehand
 wrote ~/.claude/agents/persona-reviewer.md
-installed beforehand 1.0.0
+installed beforehand 1.0.1
 ```
 
 It copies, never symlinks, and it refuses (exit 1, with the reason) rather than overwrite
@@ -67,14 +67,14 @@ uvx --from git+https://github.com/FrancescoPolitano/beforehand beforehand uninst
 
 `uninstall` removes only a skill directory carrying the marker and an agent file identical
 to the one this version ships. Both commands take `--skills-dir DIR --agents-dir DIR` for
-other locations. `beforehand --version` prints `beforehand 1.0.0`; any other command is the
+other locations. `beforehand --version` prints `beforehand 1.0.1`; any other command is the
 skill's own (`beforehand doctor`, `beforehand test`, `beforehand help` for the list).
 
 **Claude Cowork, or any host that installs a skill archive** — expected to work, not yet
-verified end to end. Download `beforehand-1.0.0.skill` from the
+verified end to end. Download `beforehand-1.0.1.skill` from the
 [Releases page](https://github.com/FrancescoPolitano/beforehand/releases), or build it with
 `uvx --from git+https://github.com/FrancescoPolitano/beforehand beforehand bundle`
-(it writes `beforehand-1.0.0.skill` into the current folder, or into `--out DIR`), install it the way the
+(it writes `beforehand-1.0.1.skill` into the current folder, or into `--out DIR`), install it the way the
 host installs a skill, and choose where the store lives:
 
 ```bash
@@ -118,7 +118,7 @@ Then, in the session: *"build a persona for halden from ./sources/2026-07-03-cal
 accept the proposed file, and *"stress-test ./proposal.md for halden"*. `$SKILL` is the skill
 directory; the store defaults to `~/.beforehand`. Where the skill directory is depends on how you installed:
 `~/.claude/skills/beforehand` after `uvx … beforehand install`, or
-`~/.claude/plugins/cache/beforehand/beforehand/1.0.0/skills/beforehand` after the plugin-marketplace
+`~/.claude/plugins/cache/beforehand/beforehand/1.0.1/skills/beforehand` after the plugin-marketplace
 route (the cache path is versioned, so it moves on upgrade).
 
 A named label is not the same thing as one voice: a conference room arrives as one name, so
@@ -171,7 +171,7 @@ outside this repository (see `dev/README.md`).
 
 ## Status
 
-**1.0.0** — the first public release; usable and used daily. The history lives in git from
+**1.0.1** — a fix release after the first public one (1.0.0); usable and used daily. The history lives in git from
 1.0 on. `sh dev/check_all.sh` is the gate: 17 test suites, the router budget, the norm
 anchors, the generality scan, the golden-store and determinism checks, the 3.9 syntax floor,
 ruff, the eval checkers and the command-line tests. [`CONTRIBUTING.md`](CONTRIBUTING.md) is

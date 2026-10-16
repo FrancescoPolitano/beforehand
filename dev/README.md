@@ -215,7 +215,7 @@ the comparison is on the example blocks themselves (the four-space-indented line
 again for `docs/assets/beforehand-loop.svg` and its in-bundle copy. The three checks are one
 loop over the three pairs, each with its own refusal message.
 
-`sh dev/build_skill.sh` writes `dist/<name>-<version>.skill` (`dist/beforehand-1.0.0.skill`) — a zip of `skills/<name>/`
+`sh dev/build_skill.sh` writes `dist/<name>-<version>.skill` (`dist/beforehand-1.0.1.skill`) — a zip of `skills/<name>/`
 rooted at `<name>/`, with `__pycache__` and `.DS_Store` stripped — taking both the name
 and the version from `.claude-plugin/plugin.json` so the bundle cannot claim a version the
 manifest does not. `dist/` is gitignored and excluded from the generality scan; the
