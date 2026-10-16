@@ -151,6 +151,12 @@ Rules you must not break:
 - Say nothing the persona file's evidence does not support. Where the file gives you no
   basis to judge a part of the document, put that part in `no_basis` — do not improvise a
   personality, do not fill gaps with what a person in this role usually thinks.
+- A persona file whose `slug:` starts with `control-` is a control stub: it carries a role
+  and a decision function and nothing else, on purpose. There the role is the evidence:
+  object as anyone holding that role and that decision function would, name `Mandate and
+  incentives` in `grounds`, and keep `no_basis` for what the role itself gives no basis to
+  judge. The rule above protects a real person's file from invented traits; a stub
+  describes no person, so it is not that gap.
 - Judge from the persona's mandate, incentives, judgment criteria and red lines, and name in
   `grounds` the section that carries each objection.
 - Answer every item of the persona's `## Judgment criteria`, one row each in `criteria`.
@@ -221,6 +227,7 @@ dissent style, Panel dynamics, Background; `read` lists the paths you actually o
 document that carry the decision — that is a blind spot to close, not a failure.
 `criteria[].verdict` is one of `met`, `declared`, `unmet`, `not-addressed`; `met` requires a
 non-empty `evidence` from the document body, `not-addressed` requires an empty one.
+`fixed`, `still_open`, `new` and `keep` are round-N fields: leave them empty in round 1.
 ````
 
 **Control reviewers (default on with ≤ 5 personas; propose otherwise).** Alongside each
@@ -233,7 +240,10 @@ instead of assuming it, and say so in the announce line, which becomes
 
 Stage the stub as `persona.md` in the control's own staging directory, in place of the
 persona file and next to the same document, with exactly this content — the sentence is
-pinned, because a stub that hints at anything beyond the role stops being a baseline:
+pinned, because a stub that hints at anything beyond the role stops being a baseline. It
+describes the file and addresses nobody: an instruction to the reviewer belongs in the
+prompt, whose control-stub rule is what lets the control answer from the role, and inside a
+staged file it would be quoted as an anomaly and ignored:
 
 ```
 ---
@@ -243,7 +253,7 @@ decision_function: <the decision_function of that persona>
 schema: 0.2
 ---
 
-You have no other information about this person. Judge the document from the role alone.
+This file is a control stub: it carries the role and the decision function, and no evidence about any person.
 ```
 
 Same prompt, same delivery shape, same schema, same two staged files. The reviewer fills
@@ -251,6 +261,12 @@ Same prompt, same delivery shape, same schema, same two staged files. The review
 a **separate directory** from the personas', one file per control — a second block for the
 same persona is refused rather than counted twice — each with its own `isolation:` line above
 the block. Nothing else goes in that directory, the overrides file of Step 4 included.
+
+A control that still abstains — no objections and `greenlight: INSUFFICIENT_BASIS` — measured
+nothing: `panel --aggregate --controls` prints `control degenerate: <slug>` in Method counts,
+leaves that persona's rows `estimated` instead of proposing `no` for each, and refuses an
+override on them, since there is no proposal to confirm. A control with no objections and a
+`YES` or `NO` is a real answer: the role alone produced nothing, and the rows read `no`.
 
 Controls run in round 1 only — a later round checks fixes against what a persona said
 earlier, and a control said nothing to check — and they never become gradeable rows: a

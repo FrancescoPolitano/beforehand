@@ -8,9 +8,9 @@ isolation: inline
  "objections": [],
  "no_basis": ["Dispatch confirmations for depot drivers", "Phased rollout starting with one depot"],
  "criteria": [],
- "greenlight": "INSUFFICIENT_BASIS",
+ "greenlight": "YES",
  "greenlight_changes": [],
  "signoff_criterion": "descriptive only",
- "overall": "The stub tells me the function and nothing about how this operation runs, so I have no objection to raise from the role alone.",
+ "overall": "From the role alone I find nothing to object to: the function is covered, and how this operation runs is not something the role tells me.",
  "round": 1, "fixed": [], "still_open": [], "new": [], "keep": []}
 ```
