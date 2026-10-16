@@ -51,6 +51,14 @@ Two modes:
       matches. Without `--controls` the column reads `estimated`: no control ran, the value
       is the model's own proxy and calibration labels it so.
 
+      A control with no objections and `greenlight: INSUFFICIENT_BASIS` abstained, and an
+      abstention measures nothing: proposing `no` from it would make the column look
+      measured when it is not. Its persona's rows stay `estimated`, Method counts prints
+      `control degenerate: <slug> (0 objections, INSUFFICIENT_BASIS): its rows stay
+      estimated`, and an override naming one of those rows is refused (exit 1), because
+      there is no proposal for it to confirm. A control with no objections and a `YES` or
+      `NO` answered: the role alone produced nothing, and its persona's rows read `no`.
+
       The column carries those three values and nothing else, because the table is pasted
       into the snapshot unedited. The proposal is not the verdict — the anchor is shared,
       the substance may not be — so Method counts lists every row still only proposed,
@@ -712,12 +720,16 @@ def aggregate(loaded, slugs, context, controls=None, overrides=None, doc=None,
     loaded = sorted(loaded, key=lambda t: (order.get(t[1]["persona"], len(order)), t[0].name))
     overrides = dict(overrides or {})
 
-    # the control objections of each persona, whatever file they arrived in
+    # the control objections of each persona, whatever file they arrived in, and the
+    # controls that abstained (no objection, INSUFFICIENT_BASIS): those measured nothing
     control_quotes = {}
+    degenerate = set()
     if controls is not None:
         for _path, obj, _isolation in controls:
             slug = control_slug(obj["persona"])
             control_quotes.setdefault(slug, []).extend(obj["objections"])
+            if not obj["objections"] and obj["greenlight"] == "INSUFFICIENT_BASIS":
+                degenerate.add(slug)
 
     round1 = []
     blind = []
@@ -756,10 +768,14 @@ def aggregate(loaded, slugs, context, controls=None, overrides=None, doc=None,
 
     # Role-generic (FR-5.3): proposed from the persona's own control, confirmed by the model.
     applied = []
+    degenerate_overrides = []
     for row in round1:
-        if controls is None:
+        if controls is None or row["persona"] in degenerate:
             row["role_generic"] = ESTIMATED
             row["role_generic_status"] = ESTIMATED
+            if row["key"] in overrides:
+                degenerate_overrides.append(row["key"])
+                continue
         else:
             best, best_quote = 0.0, None
             for item in control_quotes.get(row["persona"], []):
@@ -809,6 +825,10 @@ def aggregate(loaded, slugs, context, controls=None, overrides=None, doc=None,
         uncontrolled = [s for s in slugs if s in answered and s not in control_quotes]
         if uncontrolled:
             notes.append("no control output: " + ", ".join(uncontrolled))
+        for slug in slugs:
+            if slug in degenerate:
+                notes.append("control degenerate: %s (0 objections, INSUFFICIENT_BASIS): its "
+                             "rows stay %s" % (slug, ESTIMATED))
 
     # Row keys are unique: `main` refuses a round with two round-1 blocks for one persona
     # (`duplicate_round1`) before it gets here.
@@ -837,7 +857,9 @@ def aggregate(loaded, slugs, context, controls=None, overrides=None, doc=None,
             "method_counts": counts, "control_counts": control_counts,
             "unconfirmed": [row["key"] for row in round1
                             if row["role_generic_status"] == "proposed"],
-            "overrides": applied, "unknown_overrides": unknown_overrides, "notes": notes}
+            "overrides": applied, "unknown_overrides": unknown_overrides,
+            "degenerate_controls": [s for s in slugs if s in degenerate],
+            "degenerate_overrides": sorted(degenerate_overrides), "notes": notes}
 
 
 def role_generic_cell(row):
@@ -1122,6 +1144,13 @@ def main(argv=None):
             print("overrides: no round-1 row %s in this round" % key)
         print("aggregate refused: an override names the row it confirms as `%s`"
               % OVERRIDE_FORM)
+        return 1
+    if result["degenerate_overrides"]:
+        for key in result["degenerate_overrides"]:
+            print("overrides: %s has no proposal to confirm: its control abstained "
+                  "(0 objections, INSUFFICIENT_BASIS)" % key)
+        print("aggregate refused: a row whose control abstained stays `%s`; re-run that "
+              "control instead" % ESTIMATED)
         return 1
     if args.as_json:
         print(json.dumps(result, indent=2, ensure_ascii=False))

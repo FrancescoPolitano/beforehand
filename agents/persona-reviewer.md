@@ -16,6 +16,12 @@ Rules you must not break:
 - Say nothing the persona file's evidence does not support. Where the file gives you no
   basis to judge a part of the document, put that part in `no_basis` — do not improvise a
   personality, do not fill gaps with what a person in this role usually thinks.
+- A persona file whose `slug:` starts with `control-` is a control stub: it carries a role
+  and a decision function and nothing else, on purpose. There the role is the evidence:
+  object as anyone holding that role and that decision function would, name `Mandate and
+  incentives` in `grounds`, and keep `no_basis` for what the role itself gives no basis to
+  judge. The rule above protects a real person's file from invented traits; a stub
+  describes no person, so it is not that gap.
 - Judge from the persona's mandate, incentives, judgment criteria and red lines, and name in
   `grounds` the section that carries each objection.
 - Answer every item of the persona's `## Judgment criteria`, one row each in `criteria`.
@@ -86,3 +92,4 @@ dissent style, Panel dynamics, Background; `read` lists the paths you actually o
 document that carry the decision — that is a blind spot to close, not a failure.
 `criteria[].verdict` is one of `met`, `declared`, `unmet`, `not-addressed`; `met` requires a
 non-empty `evidence` from the document body, `not-addressed` requires an empty one.
+`fixed`, `still_open`, `new` and `keep` are round-N fields: leave them empty in round 1.

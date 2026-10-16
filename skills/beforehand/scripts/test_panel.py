@@ -423,6 +423,39 @@ checks.append(("the yes -> no override is recorded too",
                "override cfo-astrid#2: yes (proposed) -> no" in r.stdout,
                section(r.stdout, "## Method counts")))
 
+# --------------------------------------------------------------- 7b'. a control that abstained
+d = stage("controls-degenerate", ["controls/control-cfo-astrid.md",
+                                  "controls/control-coo-mira.md",
+                                  "controls/control-cto-jonas.md"])
+txt = (d / "control-coo-mira.md").read_text(encoding="utf-8").replace(
+    '"greenlight": "YES"', '"greenlight": "INSUFFICIENT_BASIS"')
+(d / "control-coo-mira.md").write_text(txt, encoding="utf-8")
+r = panel("--aggregate", FIX / "round1", "--roster", ROSTER, "--controls", d)
+checks.append(("an abstaining control (0 objections, INSUFFICIENT_BASIS) still aggregates",
+               r.returncode == 0, (r.returncode, r.stdout, r.stderr)))
+checks.append(("its persona's rows stay estimated instead of being proposed no",
+               row_for(r.stdout, "coo-mira", "Dispatch").rstrip().endswith("| estimated | ? |"),
+               row_for(r.stdout, "coo-mira", "Dispatch")))
+checks.append(("the other personas' rows are still proposed from their own controls",
+               row_for(r.stdout, "cfo-astrid", "break clause").rstrip().endswith("| yes | ? |"),
+               row_for(r.stdout, "cfo-astrid", "break clause")))
+checks.append(("Method counts names the degenerate control and leaves its rows out of the "
+               "unconfirmed list",
+               "control degenerate: coo-mira (0 objections, INSUFFICIENT_BASIS): its rows "
+               "stay estimated" in r.stdout
+               and "role-generic proposed, unconfirmed: cfo-astrid#1, cfo-astrid#2, "
+               "cfo-astrid#3, cto-jonas#1, cto-jonas#2" in r.stdout,
+               section(r.stdout, "## Method counts")))
+checks.append(("a control with no objections that did answer is not called degenerate",
+               "control degenerate" not in ctl, section(ctl, "## Method counts")))
+ovd = TMP / "overrides-degenerate.txt"
+ovd.write_text("coo-mira#1=no: the persona's own floor history produced it\n", encoding="utf-8")
+r = panel("--aggregate", FIX / "round1", "--roster", ROSTER, "--controls", d,
+          "--overrides", ovd)
+checks.append(("an override on a row whose control abstained is refused (exit 1)",
+               r.returncode == 1 and "coo-mira#1 has no proposal to confirm" in r.stdout
+               and "## Round-1 objections" not in r.stdout, (r.returncode, r.stdout)))
+
 bad = TMP / "overrides-unknown-row.txt"
 bad.write_text("cfo-astrid#9=yes: no such objection\n", encoding="utf-8")
 r = panel("--aggregate", FIX / "round1", "--roster", ROSTER, "--controls", CONTROLS,
@@ -921,8 +954,20 @@ else:
 # --------------------------------------------------------------- 12. review.md, controls
 review = REVIEW.read_text(encoding="utf-8")
 checks.append(("review.md carries the control stub's pinned sentence, verbatim",
-               "You have no other information about this person. Judge the document from "
-               "the role alone." in review, None))
+               "This file is a control stub: it carries the role and the decision function, "
+               "and no evidence about any person." in review, None))
+checks.append(("the old stub sentence, which addressed the reviewer, is gone",
+               "Judge the document from the role alone" not in review, None))
+checks.append(("review.md says what an abstaining control does to the column",
+               "control degenerate: <slug>" in review, None))
+for name, text in (("agents/persona-reviewer.md", AGENT.read_text(encoding="utf-8")),
+                   ("references/review.md", review)):
+    checks.append((f"{name} carries the control-stub rule inside the prompt",
+                   "A persona file whose `slug:` starts with `control-` is a control stub"
+                   in text, name))
+    checks.append((f"{name} says the round-N fields stay empty in round 1",
+                   "`fixed`, `still_open`, `new` and `keep` are round-N fields: leave them "
+                   "empty in round 1." in text, name))
 checks.append(("review.md states when controls are on by default",
                "Control reviewers (default on with ≤ 5 personas; propose otherwise)"
                in review, None))
